@@ -1,8 +1,19 @@
 const API_KEY = 'f36eca93f670483399b76a2befb0db58'
 let newsList = [];
+const menus = document.querySelectorAll(".menus button")
+const menus_M = document.querySelectorAll("#menu-list button")
+menus.forEach(menu => menu.addEventListener("click", (e) => getNewsByCategory(e)))
+menus_M.forEach(menu => menu.addEventListener("click", (e) => {
+    getNewsByCategory(e);
+    document.querySelector("#mySidenav").style.width = "0";
+}))
+
 
 const getLatestNews = async () => {
+    // 실제api
     // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`);
+
+    // 과제용 누나api
     const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr`);
 
 
@@ -13,6 +24,37 @@ const getLatestNews = async () => {
     newsList = data.articles
 
     console.log("news", newsList);
+    render()
+}
+
+const getNewsByCategory = async (e) => {
+    const category = e.target.textContent.toLowerCase();
+    // 실제api
+    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${API_KEY}`);
+
+    // 과제용 누나api
+    const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&category=${category}&apiKey=${API_KEY}`);
+
+    const response = await fetch(url);
+    const data = await response.json()
+
+    newsList = data.articles;
+    render()
+}
+
+const getNewsByKeyword = async () => {
+    const keyword = document.querySelector("#search-input").value;
+    // 실제api
+    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${API_KEY}`);
+
+    // 과제용 누나api
+    const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&q=${keyword}&apiKey=${API_KEY}`);
+
+    const response = await fetch(url);
+    const data = await response.json()
+
+    newsList = data.articles;
+    console.log("검색값", newsList);
     render()
 }
 
@@ -40,3 +82,29 @@ const render = () => {
 
 
 getLatestNews()
+
+
+
+
+
+
+
+
+// 사이드 메뉴
+const openNav = () => {
+    document.querySelector("#mySidenav").style.width = "250px";
+};
+
+const closeNav = () => {
+    document.querySelector("#mySidenav").style.width = "0";
+};
+
+// 검색창
+const openSearchBox = () => {
+    let inputArea = document.querySelector("#input-area");
+    if (inputArea.style.display === "inline") {
+        inputArea.style.display = "none";
+    } else {
+        inputArea.style.display = "inline";
+    }
+};
