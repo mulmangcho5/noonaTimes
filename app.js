@@ -7,55 +7,64 @@ menus_M.forEach(menu => menu.addEventListener("click", (e) => {
     getNewsByCategory(e);
     document.querySelector("#mySidenav").style.width = "0";
 }))
+let url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr`);
 
+
+const getNews = async () => {
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (response.status === 200) {
+            if(data.articles.length===0){
+                throw new Error("결과가 없습니다.")
+            }
+            newsList = data.articles;
+            render();
+        } else {
+            throw new Error(data.message)
+        }
+
+    } catch (error) {
+        console.log("error : ", error.message);
+        errorRender(error.message)
+    }
+
+
+}
 
 const getLatestNews = async () => {
     // 실제api
-    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`);
+    // url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&apiKey=${API_KEY}`);
 
     // 과제용 누나api
-    const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr`);
+    url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr`);
 
 
-    const response = await fetch(url);
-    console.log("rrr", response);
-
-    const data = await response.json();
-    newsList = data.articles
-
-    console.log("news", newsList);
-    render()
+    getNews();
 }
 
 const getNewsByCategory = async (e) => {
     const category = e.target.textContent.toLowerCase();
     // 실제api
-    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${API_KEY}`);
+    // url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&category=${category}&apiKey=${API_KEY}`);
 
     // 과제용 누나api
-    const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&category=${category}&apiKey=${API_KEY}`);
+    url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&category=${category}&apiKey=${API_KEY}`);
 
-    const response = await fetch(url);
-    const data = await response.json()
-
-    newsList = data.articles;
-    render()
+    getNews()
 }
 
 const getNewsByKeyword = async () => {
     const keyword = document.querySelector("#search-input").value;
     // 실제api
-    // const url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${API_KEY}`);
+    // url = new URL(`https://newsapi.org/v2/top-headlines?country=kr&q=${keyword}&apiKey=${API_KEY}`);
 
     // 과제용 누나api
-    const url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&q=${keyword}&apiKey=${API_KEY}`);
+    url = new URL(`https://noonatimess.netlify.app/top-headlines?&country=kr&q=${keyword}&apiKey=${API_KEY}`);
 
-    const response = await fetch(url);
-    const data = await response.json()
-
-    newsList = data.articles;
-    console.log("검색값", newsList);
-    render()
+    getNews();
 }
 
 
@@ -78,6 +87,12 @@ const render = () => {
     document.querySelector("#news-board").innerHTML = newsHtml;
 }
 
+const errorRender = (errorMessage) => {
+    const errorHtml = `<div class="alert alert-danger" role="alert">
+    ${errorMessage}
+  </div>`
+  document.querySelector("#news-board").innerHTML = errorHtml;
+}
 
 
 
